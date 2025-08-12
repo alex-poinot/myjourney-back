@@ -2,17 +2,6 @@
 import { jest } from '@jest/globals';
 
 // Mock du logger pour éviter les logs pendant les tests
-jest.mock('./src/utils/logger.js', () => ({
-  __esModule: true,
-  default: {
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-    debug: jest.fn()
-  }
-}));
-
-// Mock de la base de données pour éviter les connexions réelles
 jest.mock('./src/config/database.js', () => ({
   connectToDatabase: jest.fn().mockResolvedValue({}),
   getConnection: jest.fn().mockResolvedValue({

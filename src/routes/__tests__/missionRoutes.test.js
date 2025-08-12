@@ -2,10 +2,10 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import missionRoutes from '../missionRoutes.js';
-import MissionController from '../controllers/missionController.js';
+import MissionController from '../../controllers/missionController.js';
 
 // Mock du contrôleur
-jest.mock('../controllers/missionController.js');
+jest.mock('../../controllers/missionController.js');
 
 describe('Mission Routes', () => {
   let app;

@@ -3,6 +3,7 @@ import { errorHandler, notFoundHandler, asyncHandler } from '../errorHandlers.js
 
 // Mock du logger
 jest.mock('../logger.js', () => ({
+  __esModule: true,
   default: {
     error: jest.fn(),
     warn: jest.fn(),
