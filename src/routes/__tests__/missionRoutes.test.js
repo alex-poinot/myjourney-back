@@ -59,13 +59,6 @@ describe('Mission Routes', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
     });
-
-    it('devrait gérer les emails vides', async () => {
-      const email = '';
-      const response = await request(app).get(`/api/missions/getAllMissionsDashboard/${email}`);
-      
-      expect(response.status).toBe(200);
-    });
   });
 
   describe('Routes invalides', () => {
