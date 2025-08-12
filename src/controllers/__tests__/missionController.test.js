@@ -3,6 +3,7 @@ import request from 'supertest';
 import express from 'express';
 import MissionController from '../missionController.js';
 import MissionService from '../../services/missionService.js';
+import { errorHandler } from '../../utils/errorHandlers.js';
 
 // Mock du service
 vi.mock('../../services/missionService.js');
@@ -29,6 +30,9 @@ describe('MissionController', () => {
     missionController = new MissionController();
     
     app.get('/missions/getAllMissionsDashboard/:email', missionController.getAllMissionsDashboard);
+    
+    // Ajouter le middleware de gestion d'erreur
+    app.use(errorHandler);
   });
 
   describe('GET /missions/getAllMissionsDashboard/:email', () => {

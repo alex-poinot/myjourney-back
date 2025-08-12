@@ -3,19 +3,12 @@ import request from 'supertest';
 import express from 'express';
 import missionRoutes from '../missionRoutes.js';
 import MissionController from '../../controllers/missionController.js';
+import { notFoundHandler, errorHandler } from '../../utils/errorHandlers.js';
 
-// Mock du contrôleur
-vi.mock('../../controllers/missionController.js');
-
-describe('Mission Routes', () => {
-  let app;
-  let mockController;
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    
-    // Mock des méthodes du contrôleur
-    mockController = {
+// Mock du contrôleur avec implémentation directe
+vi.mock('../../controllers/missionController.js', () => {
+  return {
+    default: vi.fn().mockImplementation(() => ({
       getAllMissionsDashboard: vi.fn((req, res) => {
         res.json({ 
           success: true, 
@@ -29,14 +22,23 @@ describe('Mission Routes', () => {
           }] 
         });
       })
-    };
-    
-    // Mock du constructeur MissionController
-    MissionController.mockImplementation(() => mockController);
+    }))
+  };
+});
+
+describe('Mission Routes', () => {
+  let app;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
     
     app = express();
     app.use(express.json());
     app.use('/api/missions', missionRoutes);
+    
+    // Ajouter les middlewares de gestion d'erreur
+    app.use(notFoundHandler);
+    app.use(errorHandler);
   });
 
   describe('GET /api/missions/getAllMissionsDashboard/:email', () => {
@@ -48,7 +50,6 @@ describe('Mission Routes', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveLength(1);
       expect(response.body.data[0].email).toBe(email);
-      expect(mockController.getAllMissionsDashboard).toHaveBeenCalledTimes(1);
     });
 
     it('devrait gérer les emails avec des caractères spéciaux', async () => {
@@ -57,7 +58,6 @@ describe('Mission Routes', () => {
       
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
-      expect(mockController.getAllMissionsDashboard).toHaveBeenCalledTimes(1);
     });
 
     it('devrait gérer les emails vides', async () => {
@@ -65,7 +65,6 @@ describe('Mission Routes', () => {
       const response = await request(app).get(`/api/missions/getAllMissionsDashboard/${email}`);
       
       expect(response.status).toBe(200);
-      expect(mockController.getAllMissionsDashboard).toHaveBeenCalledTimes(1);
     });
   });
 

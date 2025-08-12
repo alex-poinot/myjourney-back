@@ -3,6 +3,7 @@ import request from 'supertest';
 import express from 'express';
 import UserController from '../userController.js';
 import UserService from '../../services/userService.js';
+import { errorHandler } from '../../utils/errorHandlers.js';
 
 // Mock du service
 vi.mock('../../services/userService.js');
@@ -39,6 +40,9 @@ describe('UserController', () => {
     app.post('/users', userController.createUser);
     app.put('/users/:id', userController.updateUser);
     app.delete('/users/:id', userController.deleteUser);
+    
+    // Ajouter le middleware de gestion d'erreur
+    app.use(errorHandler);
   });
 
   describe('GET /users', () => {
