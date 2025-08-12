@@ -161,7 +161,7 @@ describe('Error Handlers', () => {
   describe('asyncHandler', () => {
     it('devrait exécuter une fonction async avec succès', async () => {
       // Arrange
-      const asyncFn = jest.fn().mockResolvedValue('success');
+      const asyncFn = vi.fn().mockResolvedValue('success');
       const wrappedFn = asyncHandler(asyncFn);
 
       // Act
@@ -175,7 +175,7 @@ describe('Error Handlers', () => {
     it('devrait capturer les erreurs async et les passer à next', async () => {
       // Arrange
       const error = new Error('Async error');
-      const asyncFn = jest.fn().mockRejectedValue(error);
+      const asyncFn = vi.fn().mockRejectedValue(error);
       const wrappedFn = asyncHandler(asyncFn);
 
       // Act
@@ -188,7 +188,7 @@ describe('Error Handlers', () => {
 
     it('devrait gérer les fonctions synchrones qui retournent une promesse', async () => {
       // Arrange
-      const syncFn = jest.fn(() => Promise.resolve('sync success'));
+      const syncFn = vi.fn(() => Promise.resolve('sync success'));
       const wrappedFn = asyncHandler(syncFn);
 
       // Act

@@ -1,20 +1,20 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import MissionService from '../missionService.js';
 import MissionDao from '../../dao/missionDao.js';
 
 // Mock du DAO
-jest.mock('../../dao/missionDao.js');
+vi.mock('../../dao/missionDao.js');
 
 describe('MissionService', () => {
   let missionService;
   let mockMissionDao;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     // Créer une instance mockée du DAO
     mockMissionDao = {
-      getAllMissionsDashboard: jest.fn()
+      getAllMissionsDashboard: vi.fn()
     };
     
     // Mock du constructeur MissionDao

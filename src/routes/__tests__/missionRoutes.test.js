@@ -1,22 +1,22 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import missionRoutes from '../missionRoutes.js';
 import MissionController from '../../controllers/missionController.js';
 
 // Mock du contrôleur
-jest.mock('../../controllers/missionController.js');
+vi.mock('../../controllers/missionController.js');
 
 describe('Mission Routes', () => {
   let app;
   let mockController;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     // Mock des méthodes du contrôleur
     mockController = {
-      getAllMissionsDashboard: jest.fn((req, res) => {
+      getAllMissionsDashboard: vi.fn((req, res) => {
         res.json({ 
           success: true, 
           data: [{ 

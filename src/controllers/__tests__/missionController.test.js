@@ -1,11 +1,11 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import MissionController from '../missionController.js';
 import MissionService from '../../services/missionService.js';
 
 // Mock du service
-jest.mock('../../services/missionService.js');
+vi.mock('../../services/missionService.js');
 
 describe('MissionController', () => {
   let app;
@@ -13,14 +13,14 @@ describe('MissionController', () => {
   let mockMissionService;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     app = express();
     app.use(express.json());
     
     // Mock du service avec les méthodes nécessaires
     mockMissionService = {
-      getAllMissionsDashboard: jest.fn()
+      getAllMissionsDashboard: vi.fn()
     };
     
     // Mock du constructeur MissionService

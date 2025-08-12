@@ -1,9 +1,9 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import UserService from '../userService.js';
 import UserDao from '../../dao/userDao.js';
 
 // Mock du DAO
-jest.mock('../../dao/userDao.js');
+vi.mock('../../dao/userDao.js');
 
 describe('UserService', () => {
   let userService;
@@ -11,17 +11,17 @@ describe('UserService', () => {
 
   beforeEach(() => {
     // Réinitialiser les mocks avant chaque test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     // Créer une instance mockée du DAO
     mockUserDao = {
-      getAllUsers: jest.fn(),
-      getUserById: jest.fn(),
-      createUser: jest.fn(),
-      updateUser: jest.fn(),
-      deleteUser: jest.fn(),
-      checkUserExists: jest.fn(),
-      checkEmailExists: jest.fn()
+      getAllUsers: vi.fn(),
+      getUserById: vi.fn(),
+      createUser: vi.fn(),
+      updateUser: vi.fn(),
+      deleteUser: vi.fn(),
+      checkUserExists: vi.fn(),
+      checkEmailExists: vi.fn()
     };
     
     // Mock du constructeur UserDao
