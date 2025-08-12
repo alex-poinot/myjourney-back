@@ -3,6 +3,7 @@ import { jest } from '@jest/globals';
 
 // Mock du logger pour éviter les logs pendant les tests
 jest.mock('./src/utils/logger.js', () => ({
+  __esModule: true,
   default: {
     info: jest.fn(),
     error: jest.fn(),

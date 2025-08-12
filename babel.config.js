@@ -3,6 +3,7 @@ export default {
     [
       '@babel/preset-env',
       {
+        modules: false,
         targets: {
           node: 'current'
         }
