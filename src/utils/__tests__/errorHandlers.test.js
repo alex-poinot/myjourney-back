@@ -1,13 +1,14 @@
-import { jest } from '@jest/globals';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { errorHandler, notFoundHandler, asyncHandler } from '../errorHandlers.js';
 
 // Mock du logger
-jest.mock('../logger.js', () => ({
+vi.mock('../logger.js', () => ({
+  __esModule: true,
   default: {
-    error: jest.fn(),
-    warn: jest.fn(),
-    info: jest.fn(),
-    debug: jest.fn()
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn()
   }
 }));
 
@@ -15,7 +16,7 @@ describe('Error Handlers', () => {
   let mockReq, mockRes, mockNext;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     mockReq = {
       url: '/test',
@@ -24,11 +25,11 @@ describe('Error Handlers', () => {
     };
     
     mockRes = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis()
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis()
     };
     
-    mockNext = jest.fn();
+    mockNext = vi.fn();
   });
 
   describe('errorHandler', () => {
@@ -160,7 +161,7 @@ describe('Error Handlers', () => {
   describe('asyncHandler', () => {
     it('devrait exécuter une fonction async avec succès', async () => {
       // Arrange
-      const asyncFn = jest.fn().mockResolvedValue('success');
+      const asyncFn = vi.fn().mockResolvedValue('success');
       const wrappedFn = asyncHandler(asyncFn);
 
       // Act
@@ -174,7 +175,7 @@ describe('Error Handlers', () => {
     it('devrait capturer les erreurs async et les passer à next', async () => {
       // Arrange
       const error = new Error('Async error');
-      const asyncFn = jest.fn().mockRejectedValue(error);
+      const asyncFn = vi.fn().mockRejectedValue(error);
       const wrappedFn = asyncHandler(asyncFn);
 
       // Act
@@ -187,7 +188,7 @@ describe('Error Handlers', () => {
 
     it('devrait gérer les fonctions synchrones qui retournent une promesse', async () => {
       // Arrange
-      const syncFn = jest.fn(() => Promise.resolve('sync success'));
+      const syncFn = vi.fn(() => Promise.resolve('sync success'));
       const wrappedFn = asyncHandler(syncFn);
 
       // Act

@@ -1,11 +1,12 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import MissionController from '../missionController.js';
 import MissionService from '../../services/missionService.js';
+import { errorHandler } from '../../utils/errorHandlers.js';
 
 // Mock du service
-jest.mock('../../services/missionService.js');
+vi.mock('../../services/missionService.js');
 
 describe('MissionController', () => {
   let app;
@@ -13,14 +14,14 @@ describe('MissionController', () => {
   let mockMissionService;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     app = express();
     app.use(express.json());
     
     // Mock du service avec les méthodes nécessaires
     mockMissionService = {
-      getAllMissionsDashboard: jest.fn()
+      getAllMissionsDashboard: vi.fn()
     };
     
     // Mock du constructeur MissionService
@@ -29,6 +30,9 @@ describe('MissionController', () => {
     missionController = new MissionController();
     
     app.get('/missions/getAllMissionsDashboard/:email', missionController.getAllMissionsDashboard);
+    
+    // Ajouter le middleware de gestion d'erreur
+    app.use(errorHandler);
   });
 
   describe('GET /missions/getAllMissionsDashboard/:email', () => {

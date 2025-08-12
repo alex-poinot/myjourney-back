@@ -1,11 +1,12 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import UserController from '../userController.js';
 import UserService from '../../services/userService.js';
+import { errorHandler } from '../../utils/errorHandlers.js';
 
 // Mock du service
-jest.mock('../../services/userService.js');
+vi.mock('../../services/userService.js');
 
 describe('UserController', () => {
   let app;
@@ -13,7 +14,7 @@ describe('UserController', () => {
   let mockUserService;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     // Créer une app Express pour les tests
     app = express();
@@ -21,11 +22,11 @@ describe('UserController', () => {
     
     // Mock du service avec les méthodes nécessaires
     mockUserService = {
-      getAllUsers: jest.fn(),
-      getUserById: jest.fn(),
-      createUser: jest.fn(),
-      updateUser: jest.fn(),
-      deleteUser: jest.fn()
+      getAllUsers: vi.fn()
+      // getUserById: vi.fn(),
+      // createUser: vi.fn(),
+      // updateUser: vi.fn(),
+      // deleteUser: vi.fn()
     };
     
     // Mock du constructeur UserService
@@ -39,6 +40,9 @@ describe('UserController', () => {
     app.post('/users', userController.createUser);
     app.put('/users/:id', userController.updateUser);
     app.delete('/users/:id', userController.deleteUser);
+    
+    // Ajouter le middleware de gestion d'erreur
+    app.use(errorHandler);
   });
 
   describe('GET /users', () => {
