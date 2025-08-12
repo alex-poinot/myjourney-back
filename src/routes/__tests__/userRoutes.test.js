@@ -1,25 +1,25 @@
-import { jest } from '@jest/globals';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import userRoutes from '../userRoutes.js';
 import UserController from '../../controllers/userController.js';
 
 // Mock du contrôleur
-
+vi.mock('../../controllers/userController.js');
 describe('User Routes', () => {
   let app;
   let mockController;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     // Mock des méthodes du contrôleur
     mockController = {
-      getAllUsers: jest.fn((req, res) => res.json({ success: true, data: [] })),
-      getUserById: jest.fn((req, res) => res.json({ success: true, data: { id: req.params.id } })),
-      createUser: jest.fn((req, res) => res.status(201).json({ success: true, data: req.body })),
-      updateUser: jest.fn((req, res) => res.json({ success: true, data: { id: req.params.id, ...req.body } })),
-      deleteUser: jest.fn((req, res) => res.json({ success: true, message: 'Utilisateur supprimé' }))
+      getAllUsers: vi.fn((req, res) => res.json({ success: true, data: [] })),
+      getUserById: vi.fn((req, res) => res.json({ success: true, data: { id: req.params.id } })),
+      createUser: vi.fn((req, res) => res.status(201).json({ success: true, data: req.body })),
+      updateUser: vi.fn((req, res) => res.json({ success: true, data: { id: req.params.id, ...req.body } })),
+      deleteUser: vi.fn((req, res) => res.json({ success: true, message: 'Utilisateur supprimé' }))
     };
     
     // Mock du constructeur UserController
@@ -37,7 +37,7 @@ describe('User Routes', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toEqual([]);
-      expect(mockController.getAllUsers).toHaveBeenCalledTimes(1);
+      expect(mockController.getAllUsers).toHaveBeenCalledOnce();
     });
   });
 
@@ -48,7 +48,7 @@ describe('User Routes', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.id).toBe('123');
-      expect(mockController.getUserById).toHaveBeenCalledTimes(1);
+      expect(mockController.getUserById).toHaveBeenCalledOnce();
     });
   });
 
@@ -62,7 +62,7 @@ describe('User Routes', () => {
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toEqual(userData);
-      expect(mockController.createUser).toHaveBeenCalledTimes(1);
+      expect(mockController.createUser).toHaveBeenCalledOnce();
     });
   });
 
@@ -77,7 +77,7 @@ describe('User Routes', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data.id).toBe('123');
       expect(response.body.data.nom).toBe('Test Modifié');
-      expect(mockController.updateUser).toHaveBeenCalledTimes(1);
+      expect(mockController.updateUser).toHaveBeenCalledOnce();
     });
   });
 
@@ -88,7 +88,7 @@ describe('User Routes', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBe('Utilisateur supprimé');
-      expect(mockController.deleteUser).toHaveBeenCalledTimes(1);
+      expect(mockController.deleteUser).toHaveBeenCalledOnce();
     });
   });
 
