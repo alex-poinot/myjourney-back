@@ -32,8 +32,11 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@jest/globals": "^29.7.0",
+    "babel-jest": "^30.0.5",
     "jest": "^29.7.0",
-    "supertest": "^6.3.4",
-    "@jest/globals": "^29.7.0"
+    "supertest": "^6.3.4"
   }
 }
