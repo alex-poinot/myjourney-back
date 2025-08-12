@@ -14,9 +14,20 @@ describe('UserService', () => {
     jest.clearAllMocks();
     
     // Créer une instance mockée du DAO
-    mockUserDao = new UserDao();
+    mockUserDao = {
+      getAllUsers: jest.fn(),
+      getUserById: jest.fn(),
+      createUser: jest.fn(),
+      updateUser: jest.fn(),
+      deleteUser: jest.fn(),
+      checkUserExists: jest.fn(),
+      checkEmailExists: jest.fn()
+    };
+    
+    // Mock du constructeur UserDao
+    UserDao.mockImplementation(() => mockUserDao);
+    
     userService = new UserService();
-    userService.userDao = mockUserDao;
   });
 
   describe('getAllUsers', () => {
@@ -51,175 +62,56 @@ describe('UserService', () => {
         message: 'Erreur lors de la récupération des utilisateurs'
       });
     });
+
+    it('devrait retourner un tableau vide si aucun utilisateur', async () => {
+      // Arrange
+      mockUserDao.getAllUsers.mockResolvedValue([]);
+
+      // Act
+      const result = await userService.getAllUsers();
+
+      // Assert
+      expect(result).toEqual({
+        success: true,
+        data: [],
+        count: 0
+      });
+    });
   });
 
-  // describe('getUserById', () => {
-  //   it('devrait retourner un utilisateur par ID', async () => {
-  //     // Arrange
-  //     const mockUser = { USR_ID: 1, USR_NOM: 'Dupont', USR_MAIL: 'dupont@test.com' };
-  //     mockUserDao.getUserById.mockResolvedValue(mockUser);
+  // Tests pour les méthodes commentées dans le service
+  describe('getUserById (méthode commentée)', () => {
+    it('devrait être implémentée dans le futur', () => {
+      // Cette méthode est commentée dans le service
+      expect(userService.getUserById).toBeUndefined();
+    });
+  });
 
-  //     // Act
-  //     const result = await userService.getUserById(1);
+  describe('createUser (méthode commentée)', () => {
+    it('devrait être implémentée dans le futur', () => {
+      // Cette méthode est commentée dans le service
+      expect(userService.createUser).toBeUndefined();
+    });
+  });
 
-  //     // Assert
-  //     expect(result).toEqual({
-  //       success: true,
-  //       data: mockUser
-  //     });
-  //     expect(mockUserDao.getUserById).toHaveBeenCalledWith(1);
-  //   });
+  describe('updateUser (méthode commentée)', () => {
+    it('devrait être implémentée dans le futur', () => {
+      // Cette méthode est commentée dans le service
+      expect(userService.updateUser).toBeUndefined();
+    });
+  });
 
-  //   it('devrait rejeter avec un ID invalide', async () => {
-  //     // Act & Assert
-  //     await expect(userService.getUserById('invalid')).rejects.toEqual({
-  //       status: 400,
-  //       message: 'ID utilisateur invalide'
-  //     });
-  //   });
+  describe('deleteUser (méthode commentée)', () => {
+    it('devrait être implémentée dans le futur', () => {
+      // Cette méthode est commentée dans le service
+      expect(userService.deleteUser).toBeUndefined();
+    });
+  });
 
-  //   it('devrait rejeter si utilisateur non trouvé', async () => {
-  //     // Arrange
-  //     mockUserDao.getUserById.mockResolvedValue(null);
-
-  //     // Act & Assert
-  //     await expect(userService.getUserById(999)).rejects.toEqual({
-  //       status: 404,
-  //       message: 'Utilisateur non trouvé'
-  //     });
-  //   });
-  // });
-
-  // describe('createUser', () => {
-  //   it('devrait créer un utilisateur avec des données valides', async () => {
-  //     // Arrange
-  //     const userData = { nom: 'Nouveau', email: 'nouveau@test.com' };
-  //     const mockCreatedUser = { USR_ID: 3, ...userData };
-      
-  //     mockUserDao.checkEmailExists.mockResolvedValue(false);
-  //     mockUserDao.createUser.mockResolvedValue(mockCreatedUser);
-
-  //     // Act
-  //     const result = await userService.createUser(userData);
-
-  //     // Assert
-  //     expect(result).toEqual({
-  //       success: true,
-  //       data: mockCreatedUser,
-  //       message: 'Utilisateur créé avec succès'
-  //     });
-  //     expect(mockUserDao.checkEmailExists).toHaveBeenCalledWith('nouveau@test.com');
-  //     expect(mockUserDao.createUser).toHaveBeenCalledWith(userData);
-  //   });
-
-  //   it('devrait rejeter si email déjà utilisé', async () => {
-  //     // Arrange
-  //     const userData = { nom: 'Nouveau', email: 'existant@test.com' };
-  //     mockUserDao.checkEmailExists.mockResolvedValue(true);
-
-  //     // Act & Assert
-  //     await expect(userService.createUser(userData)).rejects.toEqual({
-  //       status: 409,
-  //       message: 'Cet email est déjà utilisé'
-  //     });
-  //   });
-
-  //   it('devrait valider les données utilisateur', async () => {
-  //     // Act & Assert
-  //     await expect(userService.createUser({})).rejects.toEqual({
-  //       status: 400,
-  //       message: 'Le nom est requis et doit être une chaîne non vide'
-  //     });
-
-  //     await expect(userService.createUser({ nom: 'Test' })).rejects.toEqual({
-  //       status: 400,
-  //       message: 'L\'email est requis et doit être une chaîne non vide'
-  //     });
-
-  //     await expect(userService.createUser({ nom: 'Test', email: 'invalid-email' })).rejects.toEqual({
-  //       status: 400,
-  //       message: 'Format d\'email invalide'
-  //     });
-  //   });
-  // });
-
-  // describe('updateUser', () => {
-  //   it('devrait mettre à jour un utilisateur existant', async () => {
-  //     // Arrange
-  //     const userData = { nom: 'Modifié', email: 'modifie@test.com' };
-  //     const mockUpdatedUser = { USR_ID: 1, ...userData };
-      
-  //     mockUserDao.checkUserExists.mockResolvedValue(true);
-  //     mockUserDao.checkEmailExists.mockResolvedValue(false);
-  //     mockUserDao.updateUser.mockResolvedValue(mockUpdatedUser);
-
-  //     // Act
-  //     const result = await userService.updateUser(1, userData);
-
-  //     // Assert
-  //     expect(result).toEqual({
-  //       success: true,
-  //       data: mockUpdatedUser,
-  //       message: 'Utilisateur mis à jour avec succès'
-  //     });
-  //   });
-
-  //   it('devrait rejeter si utilisateur n\'existe pas', async () => {
-  //     // Arrange
-  //     const userData = { nom: 'Test', email: 'test@test.com' };
-  //     mockUserDao.checkUserExists.mockResolvedValue(false);
-
-  //     // Act & Assert
-  //     await expect(userService.updateUser(999, userData)).rejects.toEqual({
-  //       status: 404,
-  //       message: 'Utilisateur non trouvé'
-  //     });
-  //   });
-  // });
-
-  // describe('deleteUser', () => {
-  //   it('devrait supprimer un utilisateur existant', async () => {
-  //     // Arrange
-  //     const mockDeletedUser = { USR_ID: 1, USR_NOM: 'Supprimé' };
-  //     mockUserDao.checkUserExists.mockResolvedValue(true);
-  //     mockUserDao.deleteUser.mockResolvedValue(mockDeletedUser);
-
-  //     // Act
-  //     const result = await userService.deleteUser(1);
-
-  //     // Assert
-  //     expect(result).toEqual({
-  //       success: true,
-  //       data: mockDeletedUser,
-  //       message: 'Utilisateur supprimé avec succès'
-  //     });
-  //   });
-
-  //   it('devrait rejeter si utilisateur n\'existe pas', async () => {
-  //     // Arrange
-  //     mockUserDao.checkUserExists.mockResolvedValue(false);
-
-  //     // Act & Assert
-  //     await expect(userService.deleteUser(999)).rejects.toEqual({
-  //       status: 404,
-  //       message: 'Utilisateur non trouvé'
-  //     });
-  //   });
-  // });
-
-  // describe('validateUserData', () => {
-  //   it('devrait valider des données correctes', () => {
-  //     const validData = { nom: 'Test', email: 'test@test.com' };
-  //     const result = userService.validateUserData(validData);
-  //     expect(result).toBeNull();
-  //   });
-
-  //   it('devrait rejeter des données invalides', () => {
-  //     expect(userService.validateUserData(null)).toBe('Données utilisateur manquantes');
-  //     expect(userService.validateUserData({})).toBe('Le nom est requis et doit être une chaîne non vide');
-  //     expect(userService.validateUserData({ nom: '' })).toBe('Le nom est requis et doit être une chaîne non vide');
-  //     expect(userService.validateUserData({ nom: 'Test' })).toBe('L\'email est requis et doit être une chaîne non vide');
-  //     expect(userService.validateUserData({ nom: 'Test', email: 'invalid' })).toBe('Format d\'email invalide');
-  //   });
-  // });
+  describe('validateUserData (méthode commentée)', () => {
+    it('devrait être implémentée dans le futur', () => {
+      // Cette méthode est commentée dans le service
+      expect(userService.validateUserData).toBeUndefined();
+    });
+  });
 });

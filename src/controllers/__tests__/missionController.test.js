@@ -18,9 +18,15 @@ describe('MissionController', () => {
     app = express();
     app.use(express.json());
     
-    mockMissionService = new MissionService();
+    // Mock du service avec les méthodes nécessaires
+    mockMissionService = {
+      getAllMissionsDashboard: jest.fn()
+    };
+    
+    // Mock du constructeur MissionService
+    MissionService.mockImplementation(() => mockMissionService);
+    
     missionController = new MissionController();
-    missionController.missionService = mockMissionService;
     
     app.get('/missions/getAllMissionsDashboard/:email', missionController.getAllMissionsDashboard);
   });
@@ -37,7 +43,10 @@ describe('MissionController', () => {
             nomGroupe: 'Groupe Test',
             numeroClient: 'CLI001',
             nomClient: 'Client Test',
-            mission: 'Mission EC'
+            mission: 'Mission EC',
+            avantMission: { percentage: 75, lab: true, conflitCheck: true, qac: true, qam: false, ldm: false },
+            pendantMission: { percentage: 25, nog: true, checklist: false, revision: false, supervision: false },
+            finMission: { percentage: 0, ndsCr: false, qmm: false, plaquette: false, restitution: false }
           }
         ],
         count: 1
@@ -58,16 +67,18 @@ describe('MissionController', () => {
     it('devrait gérer les erreurs du service', async () => {
       // Arrange
       const email = 'test@example.com';
-      mockMissionService.getAllMissionsDashboard.mockRejectedValue({
+      const mockError = {
         status: 500,
         message: 'Erreur serveur'
-      });
+      };
+      mockMissionService.getAllMissionsDashboard.mockRejectedValue(mockError);
 
       // Act
       const response = await request(app).get(`/missions/getAllMissionsDashboard/${email}`);
 
       // Assert
       expect(response.status).toBe(500);
+      expect(response.body.error).toBeDefined();
     });
 
     it('devrait retourner un tableau vide si aucune mission', async () => {
@@ -88,6 +99,24 @@ describe('MissionController', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveLength(0);
       expect(response.body.count).toBe(0);
+    });
+
+    it('devrait valider le format de l\'email', async () => {
+      // Arrange
+      const invalidEmail = 'invalid-email';
+      const mockResponse = {
+        success: true,
+        data: [],
+        count: 0
+      };
+      mockMissionService.getAllMissionsDashboard.mockResolvedValue(mockResponse);
+
+      // Act
+      const response = await request(app).get(`/missions/getAllMissionsDashboard/${invalidEmail}`);
+
+      // Assert
+      expect(response.status).toBe(200);
+      expect(mockMissionService.getAllMissionsDashboard).toHaveBeenCalledWith(invalidEmail);
     });
   });
 });

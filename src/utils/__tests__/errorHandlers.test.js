@@ -1,10 +1,22 @@
 import { jest } from '@jest/globals';
 import { errorHandler, notFoundHandler, asyncHandler } from '../errorHandlers.js';
 
+// Mock du logger
+jest.mock('../logger.js', () => ({
+  default: {
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn()
+  }
+}));
+
 describe('Error Handlers', () => {
   let mockReq, mockRes, mockNext;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+    
     mockReq = {
       url: '/test',
       method: 'GET',
@@ -58,10 +70,10 @@ describe('Error Handlers', () => {
       });
     });
 
-    it('devrait gérer les erreurs génériques', () => {
+    it('devrait gérer les erreurs avec status personnalisé', () => {
       // Arrange
       const error = {
-        message: 'Erreur générique',
+        message: 'Erreur personnalisée',
         status: 403
       };
 
@@ -72,8 +84,47 @@ describe('Error Handlers', () => {
       expect(mockRes.status).toHaveBeenCalledWith(403);
       expect(mockRes.json).toHaveBeenCalledWith({
         error: 'Erreur interne du serveur',
+        message: 'Erreur personnalisée'
+      });
+    });
+
+    it('devrait gérer les erreurs génériques sans status', () => {
+      // Arrange
+      const error = {
+        message: 'Erreur générique'
+      };
+
+      // Act
+      errorHandler(error, mockReq, mockRes, mockNext);
+
+      // Assert
+      expect(mockRes.status).toHaveBeenCalledWith(500);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: 'Erreur interne du serveur',
         message: 'Erreur générique'
       });
+    });
+
+    it('devrait masquer les messages d\'erreur en production', () => {
+      // Arrange
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      
+      const error = {
+        message: 'Message sensible'
+      };
+
+      // Act
+      errorHandler(error, mockReq, mockRes, mockNext);
+
+      // Assert
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: 'Erreur interne du serveur',
+        message: 'Une erreur inattendue s\'est produite'
+      });
+
+      // Cleanup
+      process.env.NODE_ENV = originalEnv;
     });
   });
 
@@ -87,6 +138,21 @@ describe('Error Handlers', () => {
       expect(mockRes.json).toHaveBeenCalledWith({
         error: 'Route non trouvée',
         message: 'La route GET /test n\'existe pas'
+      });
+    });
+
+    it('devrait gérer différentes méthodes HTTP', () => {
+      // Arrange
+      mockReq.method = 'POST';
+      mockReq.url = '/api/test';
+
+      // Act
+      notFoundHandler(mockReq, mockRes);
+
+      // Assert
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: 'Route non trouvée',
+        message: 'La route POST /api/test n\'existe pas'
       });
     });
   });
@@ -117,6 +183,19 @@ describe('Error Handlers', () => {
       // Assert
       expect(asyncFn).toHaveBeenCalledWith(mockReq, mockRes, mockNext);
       expect(mockNext).toHaveBeenCalledWith(error);
+    });
+
+    it('devrait gérer les fonctions synchrones qui retournent une promesse', async () => {
+      // Arrange
+      const syncFn = jest.fn(() => Promise.resolve('sync success'));
+      const wrappedFn = asyncHandler(syncFn);
+
+      // Act
+      await wrappedFn(mockReq, mockRes, mockNext);
+
+      // Assert
+      expect(syncFn).toHaveBeenCalledWith(mockReq, mockRes, mockNext);
+      expect(mockNext).not.toHaveBeenCalled();
     });
   });
 });

@@ -12,9 +12,15 @@ describe('MissionService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
-    mockMissionDao = new MissionDao();
+    // Créer une instance mockée du DAO
+    mockMissionDao = {
+      getAllMissionsDashboard: jest.fn()
+    };
+    
+    // Mock du constructeur MissionDao
+    MissionDao.mockImplementation(() => mockMissionDao);
+    
     missionService = new MissionService();
-    missionService.missionDao = mockMissionDao;
   });
 
   describe('getAllMissionsDashboard', () => {
@@ -75,6 +81,24 @@ describe('MissionService', () => {
         data: [],
         count: 0
       });
+    });
+
+    it('devrait gérer les emails avec des caractères spéciaux', async () => {
+      // Arrange
+      const email = 'test+special@example.com';
+      const mockMissions = [];
+      mockMissionDao.getAllMissionsDashboard.mockResolvedValue(mockMissions);
+
+      // Act
+      const result = await missionService.getAllMissionsDashboard(email);
+
+      // Assert
+      expect(result).toEqual({
+        success: true,
+        data: [],
+        count: 0
+      });
+      expect(mockMissionDao.getAllMissionsDashboard).toHaveBeenCalledWith(email);
     });
   });
 });

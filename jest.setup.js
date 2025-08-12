@@ -25,3 +25,7 @@ jest.mock('./src/config/database.js', () => ({
 
 // Configuration globale des timeouts
 jest.setTimeout(10000);
+
+// Mock des variables d'environnement pour les tests
+process.env.NODE_ENV = 'test';
+process.env.LOG_LEVEL = 'error';
