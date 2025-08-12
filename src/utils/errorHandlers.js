@@ -28,7 +28,7 @@ export function errorHandler(err, req, res, next) {
   // Erreur générique
   res.status(err.status || 500).json({
     error: 'Erreur interne du serveur',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Une erreur inattendue s\'est produite'
+    message: (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') ? err.message : 'Une erreur inattendue s\'est produite'
   });
 }
 

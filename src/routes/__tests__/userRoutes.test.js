@@ -2,10 +2,9 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import userRoutes from '../userRoutes.js';
-import UserController from '../controllers/userController.js';
+import UserController from '../../controllers/userController.js';
 
 // Mock du contrôleur
-jest.mock('../controllers/userController.js');
 
 describe('User Routes', () => {
   let app;
