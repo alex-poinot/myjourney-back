@@ -1,0 +1,8 @@
+getAllUsers: |
+  SELECT USR_ID, 
+    USR_NOM, 
+    USR_MAIL, 
+    USR_DATE_DEBUT, 
+    USR_UPDATE_DATE 
+  FROM UTILISATEUR 
+  ORDER BY USR_ID

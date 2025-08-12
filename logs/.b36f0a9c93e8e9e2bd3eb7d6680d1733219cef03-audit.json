@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\alexandre.poinot\\OneDrive - Grant Thornton France\\Bureau\\test-back\\logs\\.b36f0a9c93e8e9e2bd3eb7d6680d1733219cef03-audit.json",
+    "files": [
+        {
+            "date": 1754922603323,
+            "name": "C:\\Users\\alexandre.poinot\\OneDrive - Grant Thornton France\\Bureau\\test-back\\logs\\application-2025-08-11.log",
+            "hash": "ce90c496bbfd10cc255988b5bc251777b5dabac193141d47dafbcbd939ad083b"
+        }
+    ],
+    "hashType": "sha256"
+}
