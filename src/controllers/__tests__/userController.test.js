@@ -22,11 +22,11 @@ describe('UserController', () => {
     
     // Mock du service avec les méthodes nécessaires
     mockUserService = {
-      getAllUsers: vi.fn(),
-      getUserById: vi.fn(),
-      createUser: vi.fn(),
-      updateUser: vi.fn(),
-      deleteUser: vi.fn()
+      getAllUsers: vi.fn()
+      // getUserById: vi.fn(),
+      // createUser: vi.fn(),
+      // updateUser: vi.fn(),
+      // deleteUser: vi.fn()
     };
     
     // Mock du constructeur UserService
